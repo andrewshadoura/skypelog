@@ -472,20 +472,26 @@ div.msg span.from { font-weight: bold; color: #098DDE; margin: 0ex 0.5ex 0ex 0.5
                 contacts[r.dialog_partner] = []
             contacts[r.dialog_partner].append(r.html_compact())
         for name in contacts.keys():
-            fname = "%s-%s.html" % (user, name)
+            prefix = "%s-%s" % (user, name)
+            if (user, name) in files:
+                fname = "%s_%d.html" % (prefix, files[prefix] + 1)
+            else:
+                fname = "%s.html" % prefix
             try:
                 size = os.stat(fname).st_size
             except OSError as e:
                 if e.errno == errno.ENOENT:
                     f = open(fname, 'wb')
-                    files[fname] = 0
+                    files[prefix] = 0
                 else:
                     raise
             else:
                 if size >= 4194304:
-                    files[fname] += 1
-                    fname = "%s-%s_%d.html" % (user, name, files[fname])
-                f = open(fname, 'ab')
+                    files[prefix] += 1
+                    fname = "%s_%d.html" % (prefix, files[prefix] + 1)
+                    f = open(fname, 'wb')
+                else:
+                    f = open(fname, 'ab')
             print "writing %s ..." % fname
             with f:
                 f.write(HEAD.replace("[TITLE]",
