@@ -176,7 +176,7 @@ class SkypeMsg(SkypeObject):
             data[-2] = 'Unknown'
         SkypeObject.__init__(self, data)
         if 'dialog_partner' not in self.__dict__:
-            setattr(self, 'dialog_partner', None)
+            setattr(self, 'dialog_partner', self.chatname.split(';')[1]) # NONE
 
     def json_full(self):
         return json.dumps(self.__dict__, sort_keys=True, ensure_ascii=False)
